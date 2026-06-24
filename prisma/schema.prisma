@@ -1,23 +1,17 @@
-generator client { provider = "prisma-client-js" }
-datasource db { provider = "postgresql" url = env("DATABASE_URL") }
+generator client {
+  provider = "prisma-client-js"
+}
 
-enum Role { ADMIN DOCTOR HOSPITAL_ADMIN MARKETING_MANAGER }
-
-model User {
-  id String @id @default(uuid())
-  email String @unique
-  name String?
-  role Role @default(DOCTOR)
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model Lead {
-  id String @id @default(uuid())
-  name String
-  mobile String
-  email String?
-  source String
-  serviceInterested String
-  status String @default("NEW")
-  score Int @default(0)
+  id        String   @id @default(uuid())
+  name      String
+  mobile    String
+  status    String   @default("NEW")
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
