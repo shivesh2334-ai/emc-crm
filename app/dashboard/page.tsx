@@ -1,8 +1,1 @@
-export default function Dashboard() {
- return (
-  <main>
-   <h1>EMC CRM Dashboard</h1>
-   <p>Lead Management Dashboard v1.1</p>
-  </main>
- )
-}
+export default function Dashboard(){return <h1>EMC CRM v1.2 Dashboard</h1>}

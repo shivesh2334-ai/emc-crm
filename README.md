@@ -1,14 +1,15 @@
-# EMC CRM Core v1.1
+
+# EMC CRM Core v1.2
 
 Features:
-- Clerk Authentication foundation
-- Prisma schema with User + Lead
-- Lead status update API
-- Dashboard page
-- Migration SQL
+- Dashboard scaffold
+- Lead pipeline scaffold
+- RBAC helper
+- Updated Prisma schema
+- Lead API foundation
 
-Deploy:
-1. Create Neon database
-2. Configure Clerk keys
-3. Run prisma migrate
-4. Deploy to Vercel
+Next:
+- Clerk protected routes
+- ShadCN UI
+- CSV import/export
+- Audit logs
