@@ -1,0 +1,11 @@
+CREATE TABLE IF NOT EXISTS "Lead" (
+ id TEXT PRIMARY KEY,
+ name TEXT NOT NULL,
+ mobile TEXT NOT NULL,
+ email TEXT,
+ source TEXT NOT NULL,
+ "serviceInterested" TEXT NOT NULL,
+ status TEXT DEFAULT 'NEW',
+ score INTEGER DEFAULT 0,
+ "createdAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
