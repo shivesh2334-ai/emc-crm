@@ -3,10 +3,6 @@ on: [push]
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      DATABASE_URL: ${{ secrets.DATABASE_URL }}
-      NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
-      CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -14,14 +10,23 @@ jobs:
           node-version: 20
       - run: npm ci
       - name: Validate required environment variables
+        env:
+          REQUIRED_DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          REQUIRED_NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
+          REQUIRED_CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
         run: |
           missing=0
-          for key in DATABASE_URL NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY CLERK_SECRET_KEY; do
-            if [ -z "${!key}" ]; then
-              echo "::error::Missing required environment variable: $key"
+          while IFS='=' read -r key value; do
+            actual_key="${key#REQUIRED_}"
+            if [ -z "$value" ]; then
+              echo "::error::Missing required environment variable: $actual_key"
               missing=1
+              continue
             fi
-          done
+            echo "$actual_key=$value" >> "$GITHUB_ENV"
+          done <<EOF
+          $(env | grep '^REQUIRED_')
+          EOF
           if [ "$missing" -ne 0 ]; then
             exit 1
           fi
