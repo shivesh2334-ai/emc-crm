@@ -1,0 +1,18 @@
+nohup: ignoring input
+
+> emc-crm-core@1.0.0 dev
+> next dev
+
+ ⚠ Found lockfile missing swc dependencies, run next locally to automatically patch
+   ▲ Next.js 15.5.19
+   - Local:        http://localhost:3000
+   - Network:      http://10.1.0.164:3000
+
+ ✓ Starting...
+ ⚠ Found lockfile missing swc dependencies, run next locally to automatically patch
+ ✓ Ready in 1365ms
+ ✓ Compiled /middleware in 354ms (222 modules)
+ ○ Compiling /_not-found ...
+<w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (192kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
+ ✓ Compiled /_not-found in 4.8s (907 modules)
+ GET /dashboard 404 in 5283ms
