@@ -23,17 +23,27 @@ export default function AddLeadForm() {
   const submit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError("")
+    const trimmedName = name.trim()
+    const trimmedMobile = mobile.trim()
+    if (!trimmedName) { setError("Name is required"); return }
+    if (!trimmedMobile) { setError("Mobile is required"); return }
     setLoading(true)
-    const res = await fetch("/api/leads", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name: name.trim(), mobile: mobile.trim(), status }),
-    })
-    setLoading(false)
-    const data = await res.json()
-    if (!res.ok) {
-      setError(data.error ?? "Failed to create lead")
+    try {
+      const res = await fetch("/api/leads", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: trimmedName, mobile: trimmedMobile, status }),
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        setError(data.error ?? "Failed to create lead")
+        return
+      }
+    } catch {
+      setError("Network error — please try again")
       return
+    } finally {
+      setLoading(false)
     }
     reset()
     setOpen(false)

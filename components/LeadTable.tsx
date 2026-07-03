@@ -14,7 +14,10 @@ export default function LeadTable({ leads: initial }: { leads: Lead[] }) {
   const deleteLead = async (id: string) => {
     if (!confirm("Delete this lead?")) return
     const res = await fetch(`/api/leads/${id}`, { method: "DELETE" })
-    if (res.ok) setLeads(prev => prev.filter(l => l.id !== id))
+    if (res.ok) {
+      setLeads(prev => prev.filter(l => l.id !== id))
+      router.refresh()
+    }
   }
 
   const saveEdit = async () => {
