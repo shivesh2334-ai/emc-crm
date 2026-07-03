@@ -34,3 +34,21 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
     return NextResponse.json({ error: 'Lead not found' }, { status: 404 })
   }
 }
+
+export async function DELETE(_req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { sessionClaims } = await auth()
+  const role = (sessionClaims?.role as string) ?? 'NONE'
+
+  if (!canManageLeads(role)) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  }
+
+  const { id } = await params
+
+  try {
+    await prisma.lead.delete({ where: { id } })
+    return NextResponse.json({ success: true })
+  } catch {
+    return NextResponse.json({ error: 'Lead not found' }, { status: 404 })
+  }
+}
