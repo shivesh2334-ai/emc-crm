@@ -1,13 +1,13 @@
 import { prisma } from '../../../../lib/prisma'
 import { NextResponse } from 'next/server'
-import { auth } from '@clerk/nextjs/server'
+import { currentUser } from '@clerk/nextjs/server'
 import { canManageLeads } from '../../../../lib/rbac'
 
 const ALLOWED_FIELDS = ['name', 'mobile', 'status'] as const
 
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
-  const { sessionClaims } = await auth()
-  const role = (sessionClaims?.role as string) ?? 'NONE'
+  const user = await currentUser()
+  const role = (user?.publicMetadata?.role as string) ?? 'NONE'
 
   if (!canManageLeads(role)) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
@@ -36,8 +36,8 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
 }
 
 export async function DELETE(_req: Request, { params }: { params: Promise<{ id: string }> }) {
-  const { sessionClaims } = await auth()
-  const role = (sessionClaims?.role as string) ?? 'NONE'
+  const user = await currentUser()
+  const role = (user?.publicMetadata?.role as string) ?? 'NONE'
 
   if (!canManageLeads(role)) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
