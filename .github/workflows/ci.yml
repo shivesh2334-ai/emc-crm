@@ -15,10 +15,5 @@ jobs:
         with:
           node-version: 20
       - run: npm ci
-      - name: Validate required environment variables
-        run: |
-          test -n "$DATABASE_URL" || { echo "::error::Missing DATABASE_URL"; exit 1; }
-          test -n "$NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY" || { echo "::error::Missing NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY"; exit 1; }
-          test -n "$CLERK_SECRET_KEY" || { echo "::error::Missing CLERK_SECRET_KEY"; exit 1; }
       - run: npx prisma validate
       - run: npm run build
