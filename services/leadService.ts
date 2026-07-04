@@ -11,11 +11,11 @@ export function createLead(data: LeadInput) {
   const mobile = data.mobile?.trim()
 
   if (!name) {
-    throw new Error('name is required')
+    throw new Error('Name is required')
   }
 
   if (!mobile) {
-    throw new Error('mobile is required')
+    throw new Error('Mobile is required')
   }
 
   return prisma.lead.create({
