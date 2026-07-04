@@ -1,6 +1,6 @@
 import { prisma } from '../../../lib/prisma'
 import { NextResponse } from 'next/server'
-import { currentUser } from '@clerk/nextjs/server'
+import { auth } from '@clerk/nextjs/server'
 import { canManageLeads } from '../../../lib/rbac'
 
 export async function GET() {
@@ -9,8 +9,8 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
-  const user = await currentUser()
-  const role = (user?.publicMetadata?.role as string) ?? 'NONE'
+  const { sessionClaims } = await auth()
+  const role = (sessionClaims?.public_metadata as any)?.role ?? 'NONE'
 
   if (!canManageLeads(role)) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
