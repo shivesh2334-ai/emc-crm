@@ -1,0 +1,1 @@
+export async function createLead(d:any){return d}
