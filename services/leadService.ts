@@ -7,10 +7,21 @@ export type LeadInput = {
 }
 
 export function createLead(data: LeadInput) {
+  const name = data.name?.trim()
+  const mobile = data.mobile?.trim()
+
+  if (!name) {
+    throw new Error('name is required')
+  }
+
+  if (!mobile) {
+    throw new Error('mobile is required')
+  }
+
   return prisma.lead.create({
     data: {
-      name: data.name.trim(),
-      mobile: data.mobile.trim(),
+      name,
+      mobile,
       ...(data.status ? { status: data.status } : {}),
     },
   })
