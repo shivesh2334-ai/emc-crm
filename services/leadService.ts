@@ -4,6 +4,6 @@ export type LeadInput = {
   status?: string
 }
 
-export async function createLead(data: LeadInput) {
+export function createLead(data: LeadInput) {
   return data
 }
