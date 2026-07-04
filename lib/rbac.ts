@@ -1,1 +1,2 @@
-export const canManageLeads=(r:string)=>true
+export const canManageLeads = (role: string) =>
+  ['ADMIN', 'MARKETING_MANAGER'].includes(role)

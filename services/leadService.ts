@@ -1,1 +1,9 @@
-export async function createLead(d:any){return d}
+export type LeadInput = {
+  name: string
+  mobile: string
+  status?: string
+}
+
+export async function createLead(data: LeadInput) {
+  return data
+}

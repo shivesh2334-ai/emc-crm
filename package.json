@@ -1,1 +1,23 @@
-{"name":"emc-crm-core-v2"}
+{
+  "name": "emc-crm-core-v2",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "prisma generate && next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "@clerk/nextjs": "^6.0.0",
+    "@prisma/client": "^6.0.0",
+    "next": "^15.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.17.6",
+    "@types/react": "^19.2.17",
+    "prisma": "^6.0.0",
+    "typescript": "^5.0.0"
+  }
+}
