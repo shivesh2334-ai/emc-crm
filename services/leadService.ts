@@ -1,3 +1,4 @@
+import type { Lead } from '@prisma/client'
 import { prisma } from '../lib/prisma'
 
 export type LeadInput = {
@@ -6,9 +7,9 @@ export type LeadInput = {
   status?: string
 }
 
-export function createLead(data: LeadInput) {
-  const name = data.name?.trim()
-  const mobile = data.mobile?.trim()
+export async function createLead(data: LeadInput): Promise<Lead> {
+  const name = data.name.trim()
+  const mobile = data.mobile.trim()
 
   if (!name) {
     throw new Error('Name is required')
