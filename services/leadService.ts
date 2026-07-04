@@ -1,3 +1,5 @@
+import { prisma } from '../lib/prisma'
+
 export type LeadInput = {
   name: string
   mobile: string
@@ -5,5 +7,11 @@ export type LeadInput = {
 }
 
 export function createLead(data: LeadInput) {
-  return data
+  return prisma.lead.create({
+    data: {
+      name: data.name.trim(),
+      mobile: data.mobile.trim(),
+      ...(data.status ? { status: data.status } : {}),
+    },
+  })
 }
