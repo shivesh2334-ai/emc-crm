@@ -6,6 +6,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
+      # Placeholder values keep CI buildable when secrets are unavailable.
+      # The Clerk key must remain syntactically valid for prerendering, but is not functional.
       DATABASE_URL: ${{ secrets.DATABASE_URL || 'postgresql://localhost:5432/placeholder_db?schema=public' }}
       NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || 'pk_test_cGxhY2Vob2xkZXIuZXhhbXBsZSQ=' }}
       CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY || 'sk_test_placeholder' }}
