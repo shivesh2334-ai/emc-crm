@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       DATABASE_URL: ${{ secrets.DATABASE_URL || 'postgresql://localhost:5432/placeholder_db?schema=public' }}
-      NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || 'pk_test_aW52YWxpZC5pbnZhbGlkJA==' }}
+      NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || 'pk_test_cGxhY2Vob2xkZXIuZXhhbXBsZSQ=' }}
       CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY || 'sk_test_placeholder' }}
     steps:
       - uses: actions/checkout@v4
@@ -31,7 +31,7 @@ jobs:
           test -n "$CLERK_SECRET_KEY" || { echo "::error::Missing CLERK_SECRET_KEY"; exit 1; }
 
           warn_if_placeholder "DATABASE_URL" "$DATABASE_URL" "postgresql://localhost:5432/placeholder_db?schema=public"
-          warn_if_placeholder "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY" "$NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY" "pk_test_aW52YWxpZC5pbnZhbGlkJA=="
+          warn_if_placeholder "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY" "$NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY" "pk_test_cGxhY2Vob2xkZXIuZXhhbXBsZSQ="
           warn_if_placeholder "CLERK_SECRET_KEY" "$CLERK_SECRET_KEY" "sk_test_placeholder"
       - run: npx prisma validate
       - run: npm run build
