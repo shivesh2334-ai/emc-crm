@@ -2,7 +2,7 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 
-type Lead = { id: string; name: string; mobile: string; status: string; createdAt: string }
+import { Lead } from "../types/lead"
 
 const STATUSES = ["NEW", "CONTACTED", "QUALIFIED", "CLOSED"]
 

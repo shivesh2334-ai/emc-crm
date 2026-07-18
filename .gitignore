@@ -6,3 +6,8 @@ node_modules/
 
 # clerk configuration (can include secrets)
 /.clerk/
+
+# local db files / stale snapshots
+*.db
+*.zip
+tsconfig.tsbuildinfo

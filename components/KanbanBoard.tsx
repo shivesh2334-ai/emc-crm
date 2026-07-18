@@ -1,7 +1,7 @@
 "use client"
 import { useState } from "react"
 
-type Lead = { id: string; name: string; mobile: string; status: string }
+import { Lead } from "../types/lead"
 
 const STATUSES = ["NEW", "CONTACTED", "QUALIFIED", "CLOSED"]
 

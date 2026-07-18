@@ -1,54 +1,38 @@
-import { prisma } from '../../../../lib/prisma'
 import { NextResponse } from 'next/server'
-import { auth } from '@clerk/nextjs/server'
-import { canManageLeads } from '../../../../lib/rbac'
-
-const ALLOWED_FIELDS = ['name', 'mobile', 'status'] as const
+import { requireManageLeads } from '../../../../lib/auth'
+import { deleteLead, updateLead } from '../../../../services/leadService'
 
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
-  const { sessionClaims } = await auth()
-  const role = (sessionClaims?.public_metadata as any)?.role ?? 'NONE'
-
-  if (!canManageLeads(role)) {
-    return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  const access = await requireManageLeads()
+  if (!access.ok) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: access.status })
   }
 
   const { id } = await params
-  const body = await req.json()
-
-  const data: Record<string, string> = {}
-  for (const field of ALLOWED_FIELDS) {
-    if (typeof body?.[field] === 'string') {
-      data[field] = body[field]
-    }
-  }
-
-  if (Object.keys(data).length === 0) {
-    return NextResponse.json({ error: 'No valid fields to update' }, { status: 400 })
-  }
+  const body = await req.json().catch(() => null)
 
   try {
-    const lead = await prisma.lead.update({ where: { id }, data })
+    const lead = await updateLead(id, body ?? {})
+    if (!lead) {
+      return NextResponse.json({ error: 'Lead not found' }, { status: 404 })
+    }
     return NextResponse.json(lead)
-  } catch {
-    return NextResponse.json({ error: 'Lead not found' }, { status: 404 })
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Failed to update lead'
+    return NextResponse.json({ error: message }, { status: 400 })
   }
 }
 
 export async function DELETE(_req: Request, { params }: { params: Promise<{ id: string }> }) {
-  const { sessionClaims } = await auth()
-  const role = (sessionClaims?.public_metadata as any)?.role ?? 'NONE'
-
-  if (!canManageLeads(role)) {
-    return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  const access = await requireManageLeads()
+  if (!access.ok) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: access.status })
   }
 
   const { id } = await params
-
-  try {
-    await prisma.lead.delete({ where: { id } })
-    return NextResponse.json({ success: true })
-  } catch {
+  const ok = await deleteLead(id)
+  if (!ok) {
     return NextResponse.json({ error: 'Lead not found' }, { status: 404 })
   }
+  return NextResponse.json({ success: true })
 }

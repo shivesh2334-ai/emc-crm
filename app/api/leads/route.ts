@@ -1,37 +1,28 @@
-import { prisma } from '../../../lib/prisma'
 import { NextResponse } from 'next/server'
-import { auth } from '@clerk/nextjs/server'
-import { canManageLeads } from '../../../lib/rbac'
+import { requireManageLeads } from '../../../lib/auth'
+import { createLead, listLeads } from '../../../services/leadService'
 
 export async function GET() {
-  const leads = await prisma.lead.findMany()
+  const leads = await listLeads()
   return NextResponse.json(leads)
 }
 
 export async function POST(req: Request) {
-  const { sessionClaims } = await auth()
-  const role = (sessionClaims?.public_metadata as any)?.role ?? 'NONE'
-
-  if (!canManageLeads(role)) {
-    return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  const access = await requireManageLeads()
+  if (!access.ok) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: access.status })
   }
 
-  const body = await req.json()
-  const { name, mobile, status } = body ?? {}
-
-  if (typeof name !== 'string' || !name.trim()) {
-    return NextResponse.json({ error: 'name is required' }, { status: 400 })
-  }
-  if (typeof mobile !== 'string' || !mobile.trim()) {
-    return NextResponse.json({ error: 'mobile is required' }, { status: 400 })
+  const body = await req.json().catch(() => null)
+  if (!body || typeof body.name !== 'string' || typeof body.mobile !== 'string') {
+    return NextResponse.json({ error: 'name and mobile are required' }, { status: 400 })
   }
 
-  const lead = await prisma.lead.create({
-    data: {
-      name: name.trim(),
-      mobile: mobile.trim(),
-      ...(typeof status === 'string' ? { status } : {}),
-    },
-  })
-  return NextResponse.json(lead)
+  try {
+    const lead = await createLead({ name: body.name, mobile: body.mobile, status: body.status })
+    return NextResponse.json(lead)
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Failed to create lead'
+    return NextResponse.json({ error: message }, { status: 400 })
+  }
 }
