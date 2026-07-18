@@ -6,9 +6,11 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      DATABASE_URL: ${{ secrets.DATABASE_URL }}
-      NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
-      CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
+      # Placeholder values keep CI buildable when secrets are unavailable.
+      # The Clerk key must remain syntactically valid for prerendering, but is not functional.
+      DATABASE_URL: ${{ secrets.DATABASE_URL || 'postgresql://localhost:5432/placeholder_db?schema=public' }}
+      NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || 'pk_test_cGxhY2Vob2xkZXIuZXhhbXBsZSQ=' }}
+      CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY || 'sk_test_placeholder' }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -17,8 +19,21 @@ jobs:
       - run: npm ci
       - name: Validate required environment variables
         run: |
+          warn_if_placeholder() {
+            key="$1"
+            value="$2"
+            placeholder="$3"
+            if [ "$value" = "$placeholder" ]; then
+              echo "::warning::Using placeholder $key for CI build validation"
+            fi
+          }
+
           test -n "$DATABASE_URL" || { echo "::error::Missing DATABASE_URL"; exit 1; }
           test -n "$NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY" || { echo "::error::Missing NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY"; exit 1; }
           test -n "$CLERK_SECRET_KEY" || { echo "::error::Missing CLERK_SECRET_KEY"; exit 1; }
+
+          warn_if_placeholder "DATABASE_URL" "$DATABASE_URL" "postgresql://localhost:5432/placeholder_db?schema=public"
+          warn_if_placeholder "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY" "$NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY" "pk_test_cGxhY2Vob2xkZXIuZXhhbXBsZSQ="
+          warn_if_placeholder "CLERK_SECRET_KEY" "$CLERK_SECRET_KEY" "sk_test_placeholder"
       - run: npx prisma validate
       - run: npm run build

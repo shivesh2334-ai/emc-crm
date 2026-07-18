@@ -1,11 +1,11 @@
-import { prisma } from "../../../lib/prisma"
-import LeadTable from "../../../components/LeadTable"
+import { listLeads } from "../../../services/leadService"
+import LeadsView from "../../../components/LeadsView"
 import AddLeadForm from "../../../components/AddLeadForm"
 
 export const dynamic = 'force-dynamic'
 
 export default async function LeadsPage() {
-  const raw = await prisma.lead.findMany({ orderBy: { createdAt: 'desc' } })
+  const raw = await listLeads()
   const leads = raw.map(l => ({ ...l, createdAt: l.createdAt.toISOString(), updatedAt: l.updatedAt.toISOString() }))
 
   return (
@@ -14,7 +14,7 @@ export default async function LeadsPage() {
         <h1>Lead Pipeline</h1>
         <AddLeadForm />
       </div>
-      <LeadTable leads={leads} />
+      <LeadsView leads={leads} />
     </div>
   )
 }
