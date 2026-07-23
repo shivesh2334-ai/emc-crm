@@ -3,6 +3,11 @@ import { requireManageLeads } from '../../../lib/auth'
 import { createLead, listLeads } from '../../../services/leadService'
 
 export async function GET() {
+  const access = await requireManageLeads()
+  if (!access.ok) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: access.status })
+  }
+
   const leads = await listLeads()
   return NextResponse.json(leads)
 }
